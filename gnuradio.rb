@@ -2,17 +2,26 @@ require 'formula'
 
 class Gnuradio < Formula
   homepage 'http://gnuradio.org'
-  url  'http://gnuradio.org/releases/gnuradio/gnuradio-3.7.7.1.tar.gz'
-  sha256 '2b27b13fc734ab5882e42c1661d433c0c097fd8b55b682f00626fa96c356584e'
-  head 'git://gnuradio.org/gnuradio/gnuradio.git'
+  url  'http://gnuradio.org/releases/gnuradio/gnuradio-3.7.5.tar.gz'
+  sha1 'fe30be815aca149bfac1615028a279aea40c3bbb'
+  head 'http://gnuradio.org/git/gnuradio.git'
 
   depends_on 'cmake' => :build
+  depends_on 'Cheetah' => :python
+  depends_on 'lxml' => :python
+  depends_on 'numpy' => :python
   depends_on 'scipy' => :python
+  depends_on 'matplotlib' => :python
+  depends_on 'python'
   depends_on 'boost'
-  depends_on 'fftw'
-  depends_on 'pygtk'
-  depends_on 'swig'
   depends_on 'cppunit'
+  depends_on 'gsl'
+  depends_on 'fftw'
+  depends_on 'swig'
+  depends_on 'pygtk'
+  depends_on 'sdl'
+  depends_on 'libusb'
+  depends_on 'orc'
   depends_on 'pyqt' if ARGV.include?('--with-qt')
   depends_on 'pyqwt' if ARGV.include?('--with-qt')
   depends_on 'doxygen' if ARGV.include?('--with-docs')
@@ -30,11 +39,14 @@ class Gnuradio < Formula
   end
 
   def install
-    ENV.prepend_create_path 'PYTHONPATH', libexec+'lib/python2.7/site-packages'
-    install_args = [ "setup.py", "install", "--prefix=#{libexec}" ]
+
+    # Force compilation with gcc-4.2
+    #ENV['CC'] = '/usr/local/bin/gcc-4.2'
+    #ENV['LD'] = '/usr/local/bin/gcc-4.2'
+    #ENV['CXX'] = '/usr/local/bin/g++-4.2'
 
     mkdir 'build' do
-      args = ["-DCMAKE_PREFIX_PATH=#{prefix}", "-DQWT_INCLUDE_DIRS=#{HOMEBREW_PREFIX}/lib/qwt.framework/Headers", "-DQWT_LIBRARIES=#{HOMEBREW_PREFIX}/lib/qwt.framework/qwt", ] + std_cmake_args
+      args = ["-DCMAKE_PREFIX_PATH=#{prefix}", "-DQWT_INCLUDE_DIRS=#{HOMEBREW_PREFIX}/lib/qwt.framework/Headers"] + std_cmake_args
       args << '-DENABLE_GR_QTGUI=OFF' unless ARGV.include?('--with-qt')
       args << '-DENABLE_DOXYGEN=OFF' unless ARGV.include?('--with-docs')
 
